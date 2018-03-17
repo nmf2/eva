@@ -1,0 +1,44 @@
+{
+    "models": [
+        {
+            "intent": "aulas_professor",
+            "entities": ["PESSOA"],
+            "template": "O professor @professor.nome dá as seguintes cadeiras:\n[@professor.disciplinas,\t\n]"
+        },
+        {
+            "intent": "cumprimento",
+            "entities": [],
+            "template": "Olá! Com o que posso lhe ajudar?\n"
+        },
+        {
+            "intent": "horario_disciplina",
+            "entities": ["DISCIPLINA"],
+            "template": "A disciplina @disciplina.nome do curso de @disciplina.curso tem o seguinte horário: @disciplina.horario.\n"
+        },
+        {
+            "intent": "horario_disciplina",
+            "entities": ["DISCIPLINA", "CURSO"],
+            "template": "A disciplina @disciplina.nome do curso de @disciplina.curso tem o seguinte horário: @disciplina.horario.\n"
+        },
+        {
+            "intent": "introducao",
+            "entities": ["PESSOA"],
+            "template": "Olá! Eu sou o BotCIn, como posso te ajudar?"
+        },
+        {
+            "intent": "local_disciplina",
+            "entities": ["DISCIPLINA"],
+            "template": "O local da @disciplina.nome do curso de @disciplina.curso é @disciplina.local."
+        },
+        {
+            "intent": "local_disciplina",
+            "entities": ["DISCIPLINA", "CURSO"],
+            "template": "O local da @disciplina.nome do curso de @disciplina.curso é @disciplina.local."
+        },
+        {
+            "intent": "professor_disciplina",
+            "entities": ["DISCIPLINA", "CURSO"],
+            "template": "O professor da @disciplina.nome do curso de @disciplina.curso é @disciplina.professor."
+        }
+    ]
+}

@@ -86,5 +86,3 @@ def generate_answer(questions):
         answers.append(answer)
 
     return '\n'.join(answers)
-
-print(generate_answer(ex_question))
