@@ -1,11 +1,14 @@
 import re
-import bunch
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
 
-ex_question = [{
-    'entities': [{'type': 'DISCIPLINA', 'value': 'Infra de Software'}],
-    'intent': 'horario_disciplina',
-    'raw': 'hora Infra de Software'
-}]
+ex_question = [
+    {
+    'raw': 'Cadeiras de Divanilson', 
+    'entities': [{'value': 'Divanilson', 'type': 'DISCIPLINA'}], 
+    'intent': 'aulas_professor'
+    }
+]
 
 ex_model = [
     {
@@ -24,65 +27,90 @@ ex_model = [
     }
 ]
 
-def get_responses_models(questions):
-    # Connect to elastic search and stuff
-    # Separate questions and send to Elastic Search
-    # Learn elastic search
-    return ex_model
-
-"""
-    Generate a response based on the intent, entities and model of response.
-
-    @param questions
-        @type [dict]
-        List of dictionaries which represents a structured questions with entities, intents and raw content of each question. Format:
-            [
-                {
-                    'entities':[{'type':'...', 'value':'...'}, ...]
-                    'intent':'...'
-                    'raw':'...'
-                },
-                ...
-            ]
-    @return [string]
+class Response:
+    BOT_NAME = ""
+    def __init__(self, bot_name):
+        BOT_NAME = bot_name
     
-"""
+    """
+        Get responses models based on input questions
+        @param questions
+            @type [dict]
+            List of dictionaries which represents a structured questions with entities, intents and raw content of each question. Format:
+                [
+                    {
+                        'entities':[{'type':'...', 'value':'...'}, ...]
+                        'intent':'...'
+                        'raw':'...'
+                    },
+                    ...
+                ]
+        @return 
+    """
+    def get_responses_models(self, questions):
+        def run_query(query):
 
-def treat_list_of_attributes(template, entities):
-    answer = template
-    regex = r"\[@([A-Za-z0-9]*)\.(.[A-Za-z0-9]*),([A-Za-z0-9]*|[^A-Za-z0-9]+)\]"
-    lists = re.finditer(regex, answer)
+            pass
+        for question in questions:
+            try:
+                query = question.entity_query
+            except:
+                pass
+            
+        return ex_model
+        
+    """
+        Generate a response based on the intent, entities and model of response.
 
-    for list_ in lists:
-        entity, attributes_list_name, separator = list_.groups()
-        attr_list = ''
-        for attribute in entities[entity][attributes_list_name]:
-            attr_list += attribute + separator
+        @param questions
+            @type [dict]
+            List of dictionaries which represents a structured questions with entities, intents and raw content of each question. Format:
+                [
+                    {
+                        'entities':[{'type':'...', 'value':'...'}, ...]
+                        'intent':'...'
+                        'raw':'...'
+                    },
+                    ...
+                ]
+        @return [string]
+    """
+    def generate_answer(self, questions):
+        def treat_regular_attributes(template, entities):
+            answer = template
+            regex = r"@([A-Za-z0-9]*)\.([A-Za-z0-9]*)"
+            matches = re.finditer(regex, answer)
 
-        answer = answer.replace(list_.group(), attr_list)
-    
-    return answer
+            for match in matches:
+                entity, attribute_name = match.groups()
+                attribute_value = entities[entity][attribute_name]
+                answer = answer.replace(match.group(), attribute_value)
 
-def treat_regular_attributes(template, entities):
-    answer = template
-    regex = r"@([A-Za-z0-9]*)\.([A-Za-z0-9]*)"
-    matches = re.finditer(regex, answer)
+            return answer
+            
+        def treat_list_attributes(template, entities):
+            answer = template
+            regex = r"\[@([A-Za-z0-9]*)\.(.[A-Za-z0-9]*),([A-Za-z0-9]*|[^A-Za-z0-9]+)\]"
+            matches = re.finditer(regex, answer)
 
-    for match in matches:
-        entity, attribute_name = match.groups()
-        attribute = entities[entity][attribute_name]
-        answer = answer.replace(match.group(), attribute)
+            for match in matches:
+                entity, attributes_list_name, separator = match.groups()
+                attr_list = ''
+                for attribute_value in entities[entity][attributes_list_name]:
+                    attr_list += attribute_value + separator
 
-    return answer
+                answer = answer.replace(match.group(), attr_list)
+            
+            return answer
+        
+        answers = []
+        responses_models = self.get_responses_models(questions, )
+        
+        for model in responses_models:
+            answer = model['template']
+            answer = treat_list_attributes(answer, model['entities'])
+            answer = treat_regular_attributes(answer, model['entities'])
+            answers.append(answer)
+        
 
-def generate_answer(questions):
-    answers = []
-    responses_models = get_responses_models(questions)
-
-    for model in responses_models:
-        answer = model['template']
-        answer = treat_list_of_attributes(answer, model['entities'])
-        answer = treat_regular_attributes(answer, model['entities'])
-        answers.append(answer)
-
-    return '\n'.join(answers)
+        return '\n'.join(answers)
