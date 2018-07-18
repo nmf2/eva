@@ -5,15 +5,15 @@ from itertools import zip_longest
 __all__ = ['parse', 'zip_fill']
 
 
-def parse(*sents):
+def parse(*sents, **kwargs):
     return [
         {
             'entities': entities,
             'intent': intent,
             'raw': sent
         } for entities, intent, sent in zip(
-            entity_dict(*sents),
-            get_intent(*sents),
+            entity_dict(*sents, **kwargs),
+            get_intent(*sents, **kwargs),
             sents
         )
     ]
