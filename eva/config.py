@@ -8,6 +8,7 @@ EVA_PATH = os.path.join(
     '.eva',
 )
 
+
 def set_eva_path(path):
     if path:
         global EVA_PATH

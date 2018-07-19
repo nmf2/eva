@@ -31,7 +31,7 @@ def __cached_tagger(model_file, cache_key, tagger_model):
 
 def pos_tag(*sents, **kwargs):
     tagger = __cached_tagger(
-        kwargs.pop('model', 'pos.model'),
+        kwargs.pop('posmodel', 'pos.model'),
         'pos_tag', CRFTagger
     )
     return [
@@ -42,7 +42,7 @@ def pos_tag(*sents, **kwargs):
 
 def iob_tag(*sents, **kwargs):
     tagger = __cached_tagger(
-        kwargs.pop('model', 'iob.model'),
+        kwargs.pop('iobmodel', 'iob.model'),
         'iob_tag', IOBTagger
     )
     return [
