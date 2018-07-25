@@ -1,4 +1,5 @@
 from nltk.tag.crf import CRFTagger
+from eva.utils.config import BOT_PATH
 
 __all__ = [
     'IOBTagger'
@@ -17,7 +18,7 @@ class IOBTagger(CRFTagger):
     def train(self, model_file, **kwargs):
         from eva.utils.reader import IOBReader
         reader = IOBReader(
-            dirname=kwargs.pop('path', 'data/iob'),
+            dirname=kwargs.pop('path', BOT_PATH+'/data/iob'),
             test_size=kwargs.pop('test_size', 0.2),
             random_state=kwargs.pop('random_state', 42)
         )

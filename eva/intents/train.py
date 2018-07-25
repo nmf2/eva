@@ -17,7 +17,7 @@ class IntentClassifier(SerializeMixin, LinearSVC):
 
     def fit(self, **kwargs):
         reader = IOBReader(
-            dirname=kwargs.pop('path', 'data/iob'),
+            dirname=kwargs.pop('path', BOT_PATH+'/data/iob'),
             test_size=kwargs.pop('test_size', 0.2),
             random_state=kwargs.pop('random_state', 42)
         )

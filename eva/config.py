@@ -3,20 +3,20 @@ import os
 import requests
 import logging
 
-EVA_PATH = os.path.join(
+BOT_PATH = os.path.join(
     os.path.expanduser('~'),
     '.eva',
 )
 
 
-def set_eva_path(path):
+def set_bot_path(path):
     if path:
-        global EVA_PATH
-        EVA_PATH = path
+        global BOT_PATH
+        BOT_PATH = path
 
 
 def download(path=None):
-    set_eva_path(path)
+    set_bot_path(path)
 
     logger = logging.getLogger(__name__)
     sh = logging.StreamHandler()
@@ -27,9 +27,9 @@ def download(path=None):
 
     def from_url(url, subfolder):
         raw = requests.get(url)
-        folder = os.path.join(EVA_PATH, subfolder)
-        if not os.path.isdir(EVA_PATH):
-            os.mkdir(EVA_PATH)
+        folder = os.path.join(BOT_PATH, subfolder)
+        if not os.path.isdir(BOT_PATH):
+            os.mkdir(BOT_PATH)
         if not os.path.isdir(folder):
             os.mkdir(folder)
         if raw.status_code != 200:

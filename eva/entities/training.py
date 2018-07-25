@@ -33,14 +33,14 @@ for s in rd.iob_sents:
 """
     Train the tagger with the data and save the model in a file called
     'test.model' in the current directory. This file has to be put in 
-    $EVA_PATH/models to be used by the parser.
+    $BOT_PATH/models to be used by the parser.
 """
 
 tgr = IOBTagger()
 tgr.train(data, 'test.model')
 
 """
-    After moving test.model to $EVA_PATH/models specify the models to be used
+    After moving test.model to $BOT_PATH/models specify the models to be used
     in the entity recognition by adding the dictionary as a parameter of the
     entity_dict function
 """
