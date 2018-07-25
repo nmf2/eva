@@ -1,6 +1,3 @@
-from .base import match
-from .base import search
-from .base import similarities
+from response import Responser
 
-
-__all__ = ['search', 'match', 'similarities']
+__all__ = ['Responser']

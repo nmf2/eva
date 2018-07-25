@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, connections, Q
 
 
-class Responder:
+class Responser:
     """
     Object to get answers for structured quesions.
         :param bot_name: (str) The name of the bot to be used as prefix for
