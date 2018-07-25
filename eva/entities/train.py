@@ -6,6 +6,31 @@ __all__ = [
 
 
 class IOBTagger(CRFTagger):
+    """
+        Generates model file for the training data and saves it in the path
+        pointed by model_file.
+        Optional keyword arguments:
+        dirname: Directory to the .iob files
+        test_size: The test size to train the data
+        random_state: Initial random state for the train/test split
+    """
+    def train(self, model_file, **kwargs):
+        from eva.utils.reader import IOBReader
+        reader = IOBReader(
+            dirname=kwargs.pop('path', 'data/iob'),
+            test_size=kwargs.pop('test_size', 0.2),
+            random_state=kwargs.pop('random_state', 42)
+        )
+        reader.read()  # Read *.iob files in the given path
+        train_data = []
+        # Change sentence representation
+        for sentence in reader.iob_sents:
+            temp = []
+            for (word, pos, iob) in sentence:
+                temp.append(((word, pos), iob))
+            train_data.append(temp)
+
+        super().train(train_data, model_file)
 
     def _get_features(self, tokens, i):
 
