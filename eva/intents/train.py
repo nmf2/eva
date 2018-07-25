@@ -1,5 +1,6 @@
 from eva.utils import IOBReader
 from eva.utils.mixins import SerializeMixin
+from eva.utils.config import BOT_PATH
 from functools import partialmethod
 from nltk import word_tokenize
 from nltk.corpus import stopwords
