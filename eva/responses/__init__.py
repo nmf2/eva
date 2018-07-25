@@ -1,3 +1,2 @@
-from response import Responser
-
-__all__ = ['Responser']
+from response import Respondent
+__all__ = ['Respondent']
