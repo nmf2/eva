@@ -1,9 +1,10 @@
 import re
+from eva.config import BOT_NAME
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, connections, Q
 
 
-class Responder:
+class Respondent:
     """
     Object to get answers for structured quesions.
         :param bot_name: (str) The name of the bot to be used as prefix for
@@ -12,16 +13,19 @@ class Responder:
         ['localhost:9200'].
     """
 
-    def __init__(self, bot_name,  hosts=['localhost:9200']):
-        self.BOT_NAME = bot_name
+    def __init__(self, bot_name=None, hosts=['localhost:9200']):
+        if bot_name is None:
+            self.BOT_NAME = bot_name  # development
+        else:
+            self.BOT_NAME = BOT_NAME
         connections.create_connection(hosts=hosts)
         self.search = Search(using=Elasticsearch(), doc_type='_doc')
 
     def get_responses_models(self, questions):
         """
-        Get response models from Elasticsearch based on the intent and 
+        Get response models from Elasticsearch based on the intent and
         entities from questions.
-            :param questions: ([dict]) List of structured questions. 
+            :param questions: ([dict]) List of structured questions.
         """
 
         search_models = self.search.index(self.BOT_NAME+"_response_model")
@@ -43,8 +47,9 @@ class Responder:
         models = []
 
         for question in questions:
-            query = build_query(question['intent'], entity_types(
-                question['entities'])
+            query = build_query(
+                question['intent'],
+                entity_types(question['entities'])
                 )
             response_model = search_models.query(query).execute()
 
@@ -76,7 +81,7 @@ class Responder:
         template = model['template']
         entities = {}
 
-        for question_entity in question['entities']:        
+        for question_entity in question['entities']:
             if question_entity['type'] in mappings:
                 db_entity = mappings[question_entity['type']]
             else:
@@ -106,9 +111,9 @@ class Responder:
                 'template': template
             }
 
-    def generate_answer(self, questions):
+    def answer(self, questions):
         """
-        Generate answers based on the intent, entities and model of response. 
+        Generate answers based on the intent, entities and model of response.
         The answer will be in plain text, ready to be delivered to the user.
             :param questions: ([dict]) List of structured questions
         """
@@ -124,14 +129,14 @@ class Responder:
                 answer = answer.replace(match.group(), attribute_value)
 
             return answer
-            
+
         def treat_list_attributes(template, entities):
             # TODO
             #  - Make "entities" entry on structured response obj be a list
             answer = template
             regex = r"\[@([A-Za-z0-9]*)\.(.[A-Za-z0-9]*),([A-Za-z0-9]*|\
                         [^A-Za-z0-9]+)\]"
-            
+
             matches = re.finditer(regex, answer)
             for match in matches:
                 try:
@@ -143,16 +148,16 @@ class Responder:
                     answer = answer.replace(match.group(), attr_list)
                 except:
                     answer = "Perdão, não entendi que você quis dizer."
-            
+
             return answer
-        
+
         answers = []
         responses_models = self.get_responses_models(questions)
-        
+
         for model in responses_models:
             answer = model['template']
             answer = treat_list_attributes(answer, model['entities'])
             answer = treat_regular_attributes(answer, model['entities'])
             answers.append(answer)
-        
+
         return '\n'.join(answers)
