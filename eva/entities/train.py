@@ -15,7 +15,7 @@ class IOBTagger(CRFTagger):
         test_size: The test size to train the data
         random_state: Initial random state for the train/test split
     """
-    def train(self, model_file, **kwargs):
+    def train(self, model_file=None, **kwargs):
         from eva.utils.reader import IOBReader
         reader = IOBReader(
             dirname=kwargs.pop('path', BOT_PATH+'/data/iob'),
@@ -30,7 +30,10 @@ class IOBTagger(CRFTagger):
             for (word, pos, iob) in sentence:
                 temp.append(((word, pos), iob))
             train_data.append(temp)
-
+            
+        if model_file is None:
+            model_file = BOT_PATH + '/models/entities.model'
+            
         super().train(train_data, model_file)
 
     def _get_features(self, tokens, i):

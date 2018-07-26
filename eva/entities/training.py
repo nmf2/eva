@@ -16,6 +16,7 @@ rd.read()  # Read all files
         [(word, pos_tag, iob_tag),...]
 """
 rd.iob_sents
+print(rd.train_set)
 
 """
     Since the IOBTagger requires the training sentences to be in the format:
@@ -32,12 +33,12 @@ for s in rd.iob_sents:
 
 """
     Train the tagger with the data and save the model in a file called
-    'test.model' in the current directory. This file has to be put in 
+    'test.model' in the current directory. This file has to be put in
     $BOT_PATH/models to be used by the parser.
 """
 
 tgr = IOBTagger()
-tgr.train(data, 'test.model')
+tgr.train('test.model')
 
 """
     After moving test.model to $BOT_PATH/models specify the models to be used

@@ -1,4 +1,5 @@
 from eva.entities.tag import pos_tag
+from eva.config import BOT_PATH
 from glob import glob
 from nltk import word_tokenize
 from nltk.chunk import conlltags2tree
@@ -16,7 +17,8 @@ __all__ = [
 class IOBReader(object):
 
     def __init__(self, *args, **kwargs):
-        self.dirname = join(BOT_PATH,kwargs.pop('dirname', 'data/iob'), '*.iob')
+        self.dirname = join(kwargs.pop('dirname', BOT_PATH + '/data/iob'),
+                            '*.iob')
         self.test_size = kwargs.pop('test_size', 0.2)
         self.random_state = kwargs.pop('random_state', 42)
         self.read()
