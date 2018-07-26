@@ -1,5 +1,5 @@
 from nltk.tag.crf import CRFTagger
-from eva.utils.config import BOT_PATH
+from eva.config import BOT_PATH
 
 __all__ = [
     'IOBTagger'

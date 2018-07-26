@@ -5,7 +5,7 @@ import logging
 
 BOT_PATH = os.path.join(
     os.path.expanduser('~'),
-    '.eva',
+    '.bot',
 )
 
 

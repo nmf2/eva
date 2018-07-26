@@ -1,8 +1,6 @@
 import re
-from eva.config import BOT_NAME
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, connections, Q
-
+from elasticsearch_dsl import Search, connections, Q, Index
 
 
 class Respondent:
@@ -14,11 +12,8 @@ class Respondent:
         ['localhost:9200'].
     """
 
-    def __init__(self, bot_name=None, hosts=['localhost:9200']):
-        if bot_name is None:
-            self.BOT_NAME = bot_name  # development
-        else:
-            self.BOT_NAME = BOT_NAME
+    def __init__(self, hosts=['localhost:9200']):
+        self.BOT_NAME = 'cin'  # development
         connections.create_connection(hosts=hosts)
         self.search = Search(using=Elasticsearch(), doc_type='_doc')
 
@@ -95,7 +90,10 @@ class Respondent:
 
             index = self.BOT_NAME + "_" + db_entity
             value = question_entity['value']
-
+            
+            if not Index(index).exists():
+                continue
+            
             search_db_entity = self.search.index(index).sort("_score")
             query = Q("match", **{param: value})
             response_entity = search_db_entity.query(query).execute()
@@ -123,12 +121,13 @@ class Respondent:
             answer = template
             regex = r"@([A-Za-z0-9]*)\.([A-Za-z0-9]*)"
             matches = re.finditer(regex, answer)
-
-            for match in matches:
-                entity, attribute_name = match.groups()
-                attribute_value = entities[entity][attribute_name]
-                answer = answer.replace(match.group(), attribute_value)
-
+            try:
+                for match in matches:
+                    entity, attribute_name = match.groups()
+                    attribute_value = entities[entity][attribute_name]
+                    answer = answer.replace(match.group(), attribute_value)
+            except:
+                answer = "Perdão, não entendi que você quis dizer."
             return answer
 
         def treat_list_attributes(template, entities):

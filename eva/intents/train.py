@@ -1,6 +1,6 @@
 from eva.utils import IOBReader
 from eva.utils.mixins import SerializeMixin
-from eva.utils.config import BOT_PATH
+from eva.config import BOT_PATH
 from functools import partialmethod
 from nltk import word_tokenize
 from nltk.corpus import stopwords
@@ -81,3 +81,15 @@ class IntentClassifier(SerializeMixin, LinearSVC):
             len(self.train_features) + len(self.test_features),
             len(self.classes_)
         )
+
+    def save(self, path=None):
+        if path is None:
+            return super().save('intents.model')
+        else:
+            return super().save(path)
+
+    def load(self, path=None):
+        if path is None:
+            return super().load('intents.model')
+        else:
+            return super().load(path)

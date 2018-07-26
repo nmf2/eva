@@ -26,9 +26,9 @@ setup(
     zip_safe=False,
     version=version,
     description='Chatbot EVA',
-    author='Victor Ferraz',
-    author_email='vfsf@cin.ufpe.br',
-    url='https://github.com/victorfsf/eva',
+    author='Nathan Martins',
+    author_email='nmf2@cin.ufpe.br',
+    url='https://github.com/nmf2/eva',
     keywords=[
         'eva',
         'nlp',
