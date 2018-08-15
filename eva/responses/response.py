@@ -13,7 +13,7 @@ class Respondent:
     """
 
     def __init__(self, hosts=['localhost:9200']):
-        self.BOT_NAME = 'cin'  # development
+
         connections.create_connection(hosts=hosts)
         self.search = Search(using=Elasticsearch(), doc_type='_doc')
 
@@ -24,7 +24,7 @@ class Respondent:
             :param questions: ([dict]) List of structured questions.
         """
 
-        search_models = self.search.index(self.BOT_NAME+"_response_model")
+        search_models = self.search.index("response_model")
 
         def entity_types(entities):
             types = []
@@ -88,12 +88,12 @@ class Respondent:
             else:
                 param = 'id'
 
-            index = self.BOT_NAME + "_" + db_entity
+            index = db_entity
             value = question_entity['value']
-            
+
             if not Index(index).exists():
                 continue
-            
+
             search_db_entity = self.search.index(index).sort("_score")
             query = Q("match", **{param: value})
             response_entity = search_db_entity.query(query).execute()
