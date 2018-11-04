@@ -2,6 +2,8 @@ import re
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search, connections, Q, Index
 
+import json
+
 
 class Respondent:
     """
@@ -36,7 +38,7 @@ class Respondent:
         def build_query(intent, entity_types=[]):
             query = Q('term', intent=intent)
             if (entity_types != []):
-                query = query & Q('terms', entities=entity_types)
+                query = query & Q('terms', **{"entities.keyword": entity_types})
 
             return query
 
@@ -47,7 +49,10 @@ class Respondent:
                 question['intent'],
                 entity_types(question['entities'])
                 )
-            response_model = search_models.query(query).execute()
+            search_models = search_models.query(query)
+            print(json.dumps(search_models.to_dict(), indent=2))
+            response_model = search_models.execute()
+            print(json.dumps(response_model.to_dict(), indent=2))
 
             if (response_model.hits.total == 0):
                 response_model = {"entities": [],
@@ -77,6 +82,8 @@ class Respondent:
         template = model['template']
         entities = {}
 
+        print(json.dumps(question, indent=2))
+
         for question_entity in question['entities']:
             if question_entity['type'] in mappings:
                 db_entity = mappings[question_entity['type']]
@@ -96,7 +103,10 @@ class Respondent:
 
             search_db_entity = self.search.index(index).sort("_score")
             query = Q("match", **{param: value})
-            response_entity = search_db_entity.query(query).execute()
+            search_db_entity = search_db_entity.query(query)
+            print("query\n" + json.dumps(search_db_entity.to_dict(), indent=2))
+            response_entity = search_db_entity.execute()
+            print(response_entity.to_dict())
             if (response_entity.hits.total is 0):
                 template = "Não consegui encontrar informações sobre " + \
                     question_entity['value'] + " :( "
@@ -125,8 +135,12 @@ class Respondent:
                 for match in matches:
                     entity, attribute_name = match.groups()
                     attribute_value = entities[entity][attribute_name]
+                    print(attribute_value)
+                    if type(attribute_value) == list:
+                        continue
                     answer = answer.replace(match.group(), attribute_value)
             except:
+                raise
                 answer = "Perdão, não entendi que você quis dizer."
             return answer
 
@@ -134,13 +148,14 @@ class Respondent:
             # TODO
             #  - Make "entities" entry on structured response obj be a list
             answer = template
-            regex = r"\[@([A-Za-z0-9]*)\.(.[A-Za-z0-9]*),([A-Za-z0-9]*|\
-                        [^A-Za-z0-9]+)\]"
+            # Don't break the regex string to prettify with '\'. Why? Errors.
+            regex = r"\[@([A-Za-z0-9]*)\.(.[A-Za-z0-9]*),([A-Za-z0-9]*|[^A-Za-z0-9]+)\]"
 
             matches = re.finditer(regex, answer)
             for match in matches:
                 try:
                     entity, attr_list_name, separator = match.groups()
+                    print(' '.join((entity, attr_list_name, separator)))
                     attr_list = ''
                     for attribute_value in entities[entity][attr_list_name]:
                         attr_list += attribute_value + separator

@@ -42,7 +42,7 @@ def pos_tag(*sents, **kwargs):
 
 def iob_tag(*sents, **kwargs):
     tagger = __cached_tagger(
-        kwargs.pop('iobmodel', 'iob.model'),
+        kwargs.pop('iobmodel', 'entities.model'),
         'iob_tag', IOBTagger
     )
     return [
